@@ -1,0 +1,32 @@
+{
+    "MicroPython.executeButton": [
+        {
+            "text": "▶",
+            "tooltip": "运行",
+            "alignment": "left",
+            "command": "extension.executeFile",
+            "priority": 3.5
+        }
+    ],
+    "MicroPython.syncButton": [
+        {
+            "text": "$(sync)",
+            "tooltip": "同步",
+            "alignment": "left",
+            "command": "extension.execute",
+            "priority": 4
+        }
+    ],
+    "files.associations": {
+        "*.cpp": "cpp",
+        "wifi.h": "c",
+        "array": "c",
+        "deque": "c",
+        "string": "c",
+        "unordered_map": "c",
+        "unordered_set": "c",
+        "vector": "c",
+        "string_view": "c",
+        "initializer_list": "c"
+    }
+}
