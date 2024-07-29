@@ -50,6 +50,7 @@ typedef struct MotorRunDiff
 extern volatile MotorState_t Motor;
 extern MotorRunDiff_t pixelDiff;
 extern uint8_t rxCmd[128];
+extern uint8_t rxCmd_Y[128];
 extern uint8_t rxCount;
 
 void AllMotors_Init(void);

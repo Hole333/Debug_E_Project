@@ -18,7 +18,10 @@ extern OneButton button1;
 extern OneButton button2;
 extern OneButton button3;
 extern OneButton button4;
- 
+extern uint8_t Button1;
+extern uint8_t Button2;
+extern uint8_t Button3;
+extern uint8_t Button4;
 void KEY_init(void);
 
 

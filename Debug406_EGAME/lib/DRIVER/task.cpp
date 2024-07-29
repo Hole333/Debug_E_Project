@@ -127,6 +127,8 @@ void TASK_RUN(void)
     }
 }
 
+extern uint16_t Step_Time;
+extern uint16_t Step_Time_Z;
 void TASK_Handle(void)
 {
     taskTimer.timerCount++;
@@ -134,6 +136,14 @@ void TASK_Handle(void)
     {
         taskTimer.TaskRun = true;
         taskTimer.timerCount = 0;
+    }
+    if(Step_Time>0)
+    {
+        Step_Time++;
+    }
+    if(Step_Time_Z>0)
+    {
+        Step_Time_Z++;
     }
 }
 

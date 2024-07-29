@@ -16,6 +16,7 @@ volatile MotorState_t Motor =
 };
 
 uint8_t rxCmd[128] = {0}; 
+uint8_t rxCmd_Y[128] = {0}; 
 uint8_t rxCount = 0;
 MotorRunDiff_t pixelDiff = 
 {
