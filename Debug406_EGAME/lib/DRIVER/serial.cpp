@@ -1,6 +1,7 @@
 #include <serial.h>
 
-
+ChessBoard_t chess[9];
+bool FinishReceiveFlag = false;
 RX_Buffer_t RX_Buffer;
 RX_Buffer_t RX_DiffBuffer;
 
@@ -57,15 +58,18 @@ void Serial_Get(void)
 void Serial2_Get(void)
 {
     uint8_t rxData = Serial2.read();
+    static uint8_t lastData;
     RX_DiffBuffer.Buffer[RX_DiffBuffer.length] = rxData;
     RX_DiffBuffer.length++;
     // ¼ì²âÖ¡Î²
-    if (rxData == 0x5B)
+    if (rxData == 0xae && lastData == 0xfb)
     {
-        if (RX_DiffBuffer.length == 5)
+        if (RX_DiffBuffer.length == 8)
         {
-            pixelDiff.dx = (float)((RX_DiffBuffer.Buffer[1] >> 7) == 0) ? ((RX_DiffBuffer.Buffer[0] + (RX_DiffBuffer.Buffer[1] << 8))) : (-(65536 - (RX_DiffBuffer.Buffer[0] + (RX_DiffBuffer.Buffer[1] << 8))));
-            pixelDiff.dy = (float)((RX_DiffBuffer.Buffer[3] >> 7) == 0) ? ((RX_DiffBuffer.Buffer[2] + (RX_DiffBuffer.Buffer[3] << 8))) : (-(65536 - (RX_DiffBuffer.Buffer[2] + (RX_DiffBuffer.Buffer[3] << 8))));
+            chess[RX_DiffBuffer.Buffer[0] - 1].key = RX_DiffBuffer.Buffer[0];
+            chess[RX_DiffBuffer.Buffer[0] - 1].x =  (float)((RX_DiffBuffer.Buffer[2] >> 7) == 0) ? ((RX_DiffBuffer.Buffer[1] + (RX_DiffBuffer.Buffer[2] << 8))) : (-(65536 - (RX_DiffBuffer.Buffer[1] + (RX_DiffBuffer.Buffer[2] << 8))));
+            chess[RX_DiffBuffer.Buffer[0] - 1].y = (float)((RX_DiffBuffer.Buffer[4] >> 7) == 0) ? ((RX_DiffBuffer.Buffer[3] + (RX_DiffBuffer.Buffer[4] << 8))) : (-(65536 - (RX_DiffBuffer.Buffer[3] + (RX_DiffBuffer.Buffer[4] << 8))));
+            chess[RX_DiffBuffer.Buffer[0] - 1].state = (ChessState_t)RX_DiffBuffer.Buffer[5];
             memset(RX_DiffBuffer.Buffer,0,sizeof(RX_DiffBuffer.Buffer));
             RX_DiffBuffer.length = 0;
         }
@@ -75,6 +79,21 @@ void Serial2_Get(void)
             RX_DiffBuffer.length = 0;
         }
     }
+    else if(rxData == 0xbf && lastData == 0xec)
+    {
+        if (RX_DiffBuffer.length == 2)
+        {
+            FinishReceiveFlag = true;
+            memset(RX_DiffBuffer.Buffer,0,sizeof(RX_DiffBuffer.Buffer));
+            RX_DiffBuffer.length = 0;
+        }
+        else
+        {
+            memset(RX_DiffBuffer.Buffer,0,sizeof(RX_DiffBuffer.Buffer));
+            RX_DiffBuffer.length = 0; 
+        }
+    }
+    lastData = rxData;
 }
 
 
