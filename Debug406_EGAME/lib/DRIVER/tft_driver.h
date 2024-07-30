@@ -33,6 +33,10 @@ extern uint16_t Chess_L_Y;//左边第1个棋子Y坐标
 
 extern uint8_t Menu_Mode;
 extern uint8_t Chess_Pos;
+
+extern uint8_t Black_Chess_Count;
+extern uint8_t White_Chess_Count;
+
 void TFT_init(void);
 void TFT_refresh(void);
 void Menu_List(void);

@@ -129,6 +129,7 @@ void TASK_RUN(void)
 
 extern uint16_t Step_Time;
 extern uint16_t Step_Time_Z;
+extern uint16_t Step_Time_Receive;
 void TASK_Handle(void)
 {
     taskTimer.timerCount++;
@@ -144,6 +145,10 @@ void TASK_Handle(void)
     if(Step_Time_Z>0)
     {
         Step_Time_Z++;
+    }
+    if(Step_Time_Receive>0)
+    {
+        Step_Time_Receive++;
     }
 }
 

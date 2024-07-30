@@ -19,9 +19,9 @@ uint16_t Chess_L_X;//左边第1个棋子X坐标
 uint16_t Chess_L_Y;//左边第1个棋子Y坐标
 
 uint8_t Menu_Mode = 0;
-uint8_t Chess_Pos = 1;//棋子要放到棋盘的哪个位置的位置
-uint8_t Black_Chess_Count = 1;//黑色棋子编号
-uint8_t White_Chess_Count = 1;//白色棋子编号
+uint8_t Chess_Pos = 0;//棋子要放到棋盘的哪个位置的位置
+uint8_t Black_Chess_Count = 0;//黑色棋子编号
+uint8_t White_Chess_Count = 0;//白色棋子编号
 
 Preferences prefs; // 声明Preferences对象
 void Menu_List(void)
@@ -39,7 +39,7 @@ void TFT_init(void)
     digitalWrite(TFT_BACKLIGHT, HIGH);
         //显示屏初始化 120*160
     tft.init();
-    tft.setRotation(3);
+    tft.setRotation(1);
     tft.fillScreen(TFT_BLACK);
     tft.setTextSize(2);
     // cursor.ico = (char*)"<=";
@@ -345,7 +345,56 @@ void Menu_Task(void)
                     {
                         Button1 = 0;
                         Button2 = 0;
-                        if(Chess_Pos<5)
+                        if(Black_Chess_Count<5)
+                        {
+                            Black_Chess_Count+=1;
+                        }
+                    }
+                    else if(Button1==1)
+                    {
+                        Button1 = 0;
+                        Button2 = 0;
+                        if(Black_Chess_Count>1)
+                        {
+                            Black_Chess_Count-=1;
+                        }
+                    }
+                }
+                if(Button3==1)//退出详细设置模式
+                {
+                    Button3 =0;
+                    Detailed = 0;
+                }
+            }
+            else
+            {
+                Line_Change();
+                Arrow_Display(Set_Line);
+            }
+        break;
+        case 2:
+            tft.drawString("Mode2",0,0);
+            tft.drawString("B_Count:",0,16);
+            tft.drawNumber(Black_Chess_Count,104,16);
+            tft.drawString("W_Count:",0,32);
+            tft.drawNumber(White_Chess_Count,104,32);
+            tft.drawString("Chess_Pos:",0,48);
+            tft.drawNumber(Chess_Pos,130,48);
+
+            if(Set_Line!=0&&Button3==1&&Detailed==0)
+            {
+                Detailed = 1;
+                Button3 = 0;
+            }
+            if(Detailed)
+            {
+                if(Set_Line==1)
+                {
+                    if(Button2==1)
+                    {
+                        Button1 = 0;
+                        Button2 = 0;
+                        if(Black_Chess_Count<5)
                         {
                             Black_Chess_Count+=1;
                         }
@@ -361,22 +410,151 @@ void Menu_Task(void)
                     }
                 }
 
+                if(Set_Line==2)
+                {
+                    if(Button2==1)
+                    {
+                        Button1 = 0;
+                        Button2 = 0;
+                        if(White_Chess_Count<5)
+                        {
+                            White_Chess_Count+=1;
+                        }
+                    }
+                    else if(Button1==1)
+                    {
+                        Button1 = 0;
+                        Button2 = 0;
+                        if(White_Chess_Count>1)
+                        {
+                            White_Chess_Count-=1;
+                        }
+                    }
+                }
+
+                if(Set_Line==3)
+                {
+                    if(Button2==1)
+                    {
+                        Button1 = 0;
+                        Button2 = 0;
+                        if(Chess_Pos<9)
+                        {
+                            Chess_Pos+=1;
+                        }
+                    }
+                    else if(Button1==1)
+                    {
+                        Button1 = 0;
+                        Button2 = 0;
+                        if(Chess_Pos>1)
+                        {
+                            Chess_Pos-=1;
+                        }
+                    }
+                }
+
                 if(Button3==1)//退出详细设置模式
                 {
                     Button3 =0;
+                    // Button4 = 0;
                     Detailed = 0;
                 }
             }
-            else
-            {
-                Line_Change();
-                Arrow_Display(Set_Line);
-            }
-        break;
-        case 2:
-            tft.drawString("Mode2",0,0);
             Line_Change();
             Arrow_Display(Set_Line);    
+        break;
+        case 3:
+            tft.drawString("Mode3",0,0);
+            tft.drawString("B_Count:",0,16);
+            tft.drawNumber(Black_Chess_Count,104,16);
+            tft.drawString("W_Count:",0,32);
+            tft.drawNumber(White_Chess_Count,104,32);
+            tft.drawString("Chess_Pos:",0,48);
+            tft.drawNumber(Chess_Pos,130,48);
+
+            if(Set_Line!=0&&Button3==1&&Detailed==0)
+            {
+                Detailed = 1;
+                Button3 = 0;
+            }
+            if(Detailed)
+            {
+                if(Set_Line==1)
+                {
+                    if(Button2==1)
+                    {
+                        Button1 = 0;
+                        Button2 = 0;
+                        if(Black_Chess_Count<5)
+                        {
+                            Black_Chess_Count+=1;
+                        }
+                    }
+                    else if(Button1==1)
+                    {
+                        Button1 = 0;
+                        Button2 = 0;
+                        if(Black_Chess_Count>1)
+                        {
+                            Black_Chess_Count-=1;
+                        }
+                    }
+                }
+
+                if(Set_Line==2)
+                {
+                    if(Button2==1)
+                    {
+                        Button1 = 0;
+                        Button2 = 0;
+                        if(White_Chess_Count<5)
+                        {
+                            White_Chess_Count+=1;
+                        }
+                    }
+                    else if(Button1==1)
+                    {
+                        Button1 = 0;
+                        Button2 = 0;
+                        if(White_Chess_Count>1)
+                        {
+                            White_Chess_Count-=1;
+                        }
+                    }
+                }
+
+                if(Set_Line==3)
+                {
+                    if(Button2==1)
+                    {
+                        Button1 = 0;
+                        Button2 = 0;
+                        if(Chess_Pos<9)
+                        {
+                            Chess_Pos+=1;
+                        }
+                    }
+                    else if(Button1==1)
+                    {
+                        Button1 = 0;
+                        Button2 = 0;
+                        if(Chess_Pos>1)
+                        {
+                            Chess_Pos-=1;
+                        }
+                    }
+                }
+
+                if(Button3==1)//退出详细设置模式
+                {
+                    Button3 =0;
+                    // Button4 = 0;
+                    Detailed = 0;
+                }
+            }
+            Line_Change();
+            Arrow_Display(Set_Line); 
         break;
     }
 

@@ -2,7 +2,7 @@
 #define _SERIAL_H
 #include <Arduino.h>
 #include <Stepmotor.h>
-
+#define Requst_Data Serial2.write(0xef)
 typedef enum
 {
     NONE = 0,
