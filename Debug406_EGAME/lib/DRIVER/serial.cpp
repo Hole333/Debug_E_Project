@@ -64,12 +64,13 @@ void Serial2_Get(void)
     // ¼ì²âÖ¡Î²
     if (rxData == 0xae && lastData == 0xfb)
     {
-        if (RX_DiffBuffer.length == 8)
+        if (RX_DiffBuffer.length == 9)
         {
             chess[RX_DiffBuffer.Buffer[0] - 1].key = RX_DiffBuffer.Buffer[0];
             chess[RX_DiffBuffer.Buffer[0] - 1].x =  (float)((RX_DiffBuffer.Buffer[2] >> 7) == 0) ? ((RX_DiffBuffer.Buffer[1] + (RX_DiffBuffer.Buffer[2] << 8))) : (-(65536 - (RX_DiffBuffer.Buffer[1] + (RX_DiffBuffer.Buffer[2] << 8))));
             chess[RX_DiffBuffer.Buffer[0] - 1].y = (float)((RX_DiffBuffer.Buffer[4] >> 7) == 0) ? ((RX_DiffBuffer.Buffer[3] + (RX_DiffBuffer.Buffer[4] << 8))) : (-(65536 - (RX_DiffBuffer.Buffer[3] + (RX_DiffBuffer.Buffer[4] << 8))));
-            chess[RX_DiffBuffer.Buffer[0] - 1].state = (ChessState_t)RX_DiffBuffer.Buffer[5];
+            chess[RX_DiffBuffer.Buffer[0] - 1].angle = (int16_t)RX_DiffBuffer.Buffer[5];
+            chess[RX_DiffBuffer.Buffer[0] - 1].state = (ChessState_t)RX_DiffBuffer.Buffer[6];
             memset(RX_DiffBuffer.Buffer,0,sizeof(RX_DiffBuffer.Buffer));
             RX_DiffBuffer.length = 0;
         }

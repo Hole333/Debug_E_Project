@@ -16,6 +16,7 @@ typedef struct Chess_Board
     ChessState_t state;
     int16_t x;
     int16_t y;
+    int16_t angle;
 }ChessBoard_t;
 
 
