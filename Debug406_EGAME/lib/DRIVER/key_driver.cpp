@@ -54,7 +54,10 @@ void S4_duringLongPress()
 {
     Button4 = 2;
 }
-
+void S3_duringLongPress()
+{
+    Button3 = 2;
+}
 void KEY_init(void)
 {
   // 按键初始化
@@ -75,4 +78,5 @@ void KEY_init(void)
   button4.reset(); // 清除一下按钮状态机的状态
   button4.attachClick(S4_callBack); 
   button4.attachDuringLongPress(S4_duringLongPress);//注册长按
+  button3.attachDuringLongPress(S3_duringLongPress);//注册长按
 }

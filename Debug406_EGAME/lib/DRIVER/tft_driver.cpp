@@ -18,10 +18,16 @@ uint16_t Chess_R_Y;//右边第2个棋子Y坐标
 uint16_t Chess_L_X;//左边第1个棋子X坐标
 uint16_t Chess_L_Y;//左边第1个棋子Y坐标
 
-uint8_t Menu_Mode = 0;
-uint8_t Chess_Pos = 0;//棋子要放到棋盘的哪个位置的位置
-uint8_t Black_Chess_Count = 0;//黑色棋子编号
-uint8_t White_Chess_Count = 0;//白色棋子编号
+int8_t Menu_Mode = 0;
+int8_t Menu_Modebuff = 0;
+uint8_t Chess_selmode = 0;//棋子状态
+uint8_t Chess_selmodebuff = 0;//棋子状态
+uint8_t Chess_Pos = 1;//棋子要放到棋盘的哪个位置的位置
+uint8_t Chesssource_Count = 1;//黑色棋子编号
+uint8_t bestRow=0;
+uint8_t bestCol=0;
+
+
 
 Preferences prefs; // 声明Preferences对象
 void Menu_List(void)
@@ -130,26 +136,347 @@ void Menu_Task(void)
 {
     static uint8_t Detailed = 0;//详细设置模式
     static uint8_t Second_Set = 0;
-    if(Set_Line==0&&Button3==1)
+
+
+    if(Menu_Mode == 0)
     {
-        if((Button2==1) && (Menu_Mode < 7))
+        tft.drawString("Mode0",0,0);
+        tft.drawString("sel mode:",0,16);
+        tft.drawNumber(Menu_Modebuff,108,16);
+        if(Button1==1)
         {
             Button1 = 0;
             Button2 = 0;
             Button3 = 0;
-            Menu_Mode++;
-            tft.fillScreen(TFT_BLACK);
+            Menu_Modebuff++;
+            if(Menu_Modebuff>6)
+            {Menu_Modebuff=1;}
         }
-        else if((Button1==1) && (Menu_Mode > 0))
+        else if(Button2==1)
         {
             Button1 = 0;
             Button2 = 0;
             Button3 = 0;
-            Menu_Mode--;
+            Menu_Modebuff--;
+            if(Menu_Modebuff<1)
+            {Menu_Modebuff=6;}
+        }
+        else if(Button3==1)
+        {
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            Menu_Mode=Menu_Modebuff;
+            tft.fillScreen(TFT_BLACK);
+            if(Menu_Mode==5)
+            {Chess_selmodebuff=100;}
+            
+        }
+        
+        
+    }
+    if(Menu_Mode == 1)
+    {
+        tft.drawString("Mode1",0,0);
+        tft.drawString("sel bchess:",0,16);
+        tft.drawNumber(Chesssource_Count,132,16);
+        {tft.drawString("wait but4!",0,32);}
+        
+         if(Button1==1)
+        {
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            Chesssource_Count++;
+            if(Chesssource_Count>5)
+            {Chesssource_Count=1;}
+        }
+        else if(Button2==1)
+        {
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            Chesssource_Count--;
+            if(Chesssource_Count<1)
+            {Chesssource_Count=5;}
+        }
+        if(Button3==2)
+        {
+            tft.fillScreen(TFT_BLACK);
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            Menu_Mode=0;
+            Chesssource_Count=1;
             tft.fillScreen(TFT_BLACK);
         }
+
+        
+        
     }
 
+    if(Menu_Mode == 2)
+    {
+        tft.drawString("Mode2",0,0);
+        tft.drawString("chess:",0,16);
+        tft.drawNumber(Chesssource_Count,72,16);
+        tft.drawString("pos:",0,32);
+        tft.drawNumber(Chess_Pos,48,32);
+        if(Chess_selmode==0)
+        {tft.drawString("-",120,16);}
+        else 
+        {tft.drawString("-",120,32);}
+        {tft.drawString("wait but4",0,48);}
+        
+         if(Button1==1)
+        {
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            if(Chess_selmode==0)
+            { Chesssource_Count++;
+            if(Chesssource_Count>10)
+            {Chesssource_Count=1;}
+            }
+            else 
+            {Chess_Pos++;
+            if(Chess_Pos>9)
+            {Chess_Pos=1;}}
+            tft.fillScreen(TFT_BLACK);
+           
+        }
+        else if(Button2==1)
+        {
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            if(Chess_selmode==0)
+            { Chesssource_Count--;
+            if(Chesssource_Count<1)
+            {Chesssource_Count=10;}
+            }
+            else 
+            {Chess_Pos--;
+            if(Chess_Pos<1)
+            {Chess_Pos=9;}}
+            tft.fillScreen(TFT_BLACK);
+        }
+        else if(Button3==1)
+        {
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            tft.fillScreen(TFT_BLACK);
+            Chess_selmode++;
+            if(Chess_selmode>1)
+            {Chess_selmode=0;}
+            tft.fillScreen(TFT_BLACK);
+        }
+        else if(Button3==2)
+        {
+            
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            Menu_Mode=0;
+            Chess_selmode=0;
+            Chess_Pos=1;
+            Chesssource_Count=1;
+            tft.fillScreen(TFT_BLACK);
+        }
+
+        
+        
+    }
+    if(Menu_Mode == 3)
+    {
+        tft.drawString("Mode3",0,0);
+        tft.drawString("chess:",0,16);
+        tft.drawNumber(Chesssource_Count,72,16);
+        tft.drawString("pos:",0,32);
+        tft.drawNumber(Chess_Pos,48,32);
+        if(Chess_selmode==0)
+        {tft.drawString("-",120,16);}
+        else 
+        {tft.drawString("-",120,32);}
+        {tft.drawString("wait but4",0,48);}
+        
+         if(Button1==1)
+        {
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            if(Chess_selmode==0)
+            { Chesssource_Count++;
+            if(Chesssource_Count>10)
+            {Chesssource_Count=1;}
+            }
+            else 
+            {Chess_Pos++;
+            if(Chess_Pos>9)
+            {Chess_Pos=1;}}
+            tft.fillScreen(TFT_BLACK);
+           
+        }
+        else if(Button2==1)
+        {
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            if(Chess_selmode==0)
+            { Chesssource_Count--;
+            if(Chesssource_Count<1)
+            {Chesssource_Count=10;}
+            }
+            else 
+            {Chess_Pos--;
+            if(Chess_Pos<1)
+            {Chess_Pos=9;}}
+            tft.fillScreen(TFT_BLACK);
+        }
+        else if(Button3==1)
+        {
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            tft.fillScreen(TFT_BLACK);
+            Chess_selmode++;
+            if(Chess_selmode>1)
+            {Chess_selmode=0;}
+            tft.fillScreen(TFT_BLACK);
+        }
+        else if(Button3==2)
+        {
+            
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            Menu_Mode=0;
+            Chess_selmode=0;
+            Chess_Pos=1;
+            Chesssource_Count=1;
+            tft.fillScreen(TFT_BLACK);
+        }
+
+        
+        
+    }
+     if(Menu_Mode == 4)
+    {
+        tft.drawString("M4",0,0);
+        tft.drawString("pos:",0,16);
+        tft.drawNumber(Chess_Pos,48,16);
+        tft.drawString("step:",48,0);
+        tft.drawNumber(Chess_selmode,96,0);
+        tft.drawString("best:",0,32);
+        tft.drawNumber(bestRow,80,32);
+        tft.drawNumber(bestCol,112,32);
+        tft.drawNumber(BigChess_Pos[1],0,48);
+        tft.drawNumber(BigChess_Pos[2],24,48);
+        tft.drawNumber(BigChess_Pos[3],48,48);
+        tft.drawNumber(BigChess_Pos[4],0,64);
+        tft.drawNumber(BigChess_Pos[5],24,64);
+        tft.drawNumber(BigChess_Pos[6],48,64);
+        tft.drawNumber(BigChess_Pos[7],0,80);
+        tft.drawNumber(BigChess_Pos[8],24,80);
+        tft.drawNumber(BigChess_Pos[9],48,80);
+        
+        
+         if(Button1==1&&Chess_selmode==0)
+        {
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            Chess_Pos++;
+            if(Chess_Pos>9)
+            {Chess_Pos=1;}
+            tft.fillScreen(TFT_BLACK);
+           
+        }
+        else if(Button2==1&&Chess_selmode==0)
+        {
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+           Chess_Pos--;
+            if(Chess_Pos<1)
+            {Chess_Pos=9;}
+            tft.fillScreen(TFT_BLACK);
+        }
+        else if(Button3==1)
+        {
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            
+            tft.fillScreen(TFT_BLACK);
+            Chess_selmodebuff=Chess_selmode;
+            
+            tft.fillScreen(TFT_BLACK);
+        }
+        else if(Button3==2)
+        {
+            
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            Menu_Mode=0;
+            Chess_selmode=0;
+            Chess_Pos=1;
+            Chesssource_Count=1;
+            tft.fillScreen(TFT_BLACK);
+        }
+
+        
+        
+    }
+if(Menu_Mode == 5)
+    {
+        tft.drawString("M5",0,0);
+        tft.drawString("step:",48,0);
+        tft.drawNumber(Chess_selmode,96,0);
+        tft.drawString("best:",0,32);
+        tft.drawNumber(bestRow,80,32);
+        tft.drawNumber(bestCol,112,32);
+        tft.drawNumber(BigChess_Pos[1],0,48);
+        tft.drawNumber(BigChess_Pos[2],24,48);
+        tft.drawNumber(BigChess_Pos[3],48,48);
+        tft.drawNumber(BigChess_Pos[4],0,64);
+        tft.drawNumber(BigChess_Pos[5],24,64);
+        tft.drawNumber(BigChess_Pos[6],48,64);
+        tft.drawNumber(BigChess_Pos[7],0,80);
+        tft.drawNumber(BigChess_Pos[8],24,80);
+        tft.drawNumber(BigChess_Pos[9],48,80);
+        
+        
+        
+        if(Button3==1)
+        {
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            tft.fillScreen(TFT_BLACK);
+            Chess_selmodebuff=Chess_selmode;
+            
+            tft.fillScreen(TFT_BLACK);
+        }
+        else if(Button3==2)
+        {
+            
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            Menu_Mode=0;
+            Chess_selmode=0;
+            Chess_Pos=1;
+            Chesssource_Count=1;
+            tft.fillScreen(TFT_BLACK);
+        }
+
+        
+        
+    }
+/*
     switch(Menu_Mode)
     {
         case 0:
@@ -557,5 +884,5 @@ void Menu_Task(void)
             Arrow_Display(Set_Line); 
         break;
     }
-
+*/
 }

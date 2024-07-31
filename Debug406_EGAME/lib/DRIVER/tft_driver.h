@@ -31,11 +31,18 @@ extern uint16_t Chess_R_Y;//右边第2个棋子Y坐标
 extern uint16_t Chess_L_X;//左边第1个棋子X坐标
 extern uint16_t Chess_L_Y;//左边第1个棋子Y坐标
 
-extern uint8_t Menu_Mode;
-extern uint8_t Chess_Pos;
 
-extern uint8_t Black_Chess_Count;
-extern uint8_t White_Chess_Count;
+extern int8_t Menu_Mode;
+extern int8_t Menu_Modebuff;
+extern uint8_t Chess_selmode;//棋子状态
+extern uint8_t Chess_selmodebuff;//棋子状态
+extern uint8_t Chess_Pos;//棋子要放到棋盘的哪个位置的位置
+extern uint8_t Chesssource_Count;//黑色棋子编号
+extern uint8_t bestRow;
+extern uint8_t bestCol;
+
+
+extern uint16_t BigChess_Pos[10];
 
 void TFT_init(void);
 void TFT_refresh(void);
