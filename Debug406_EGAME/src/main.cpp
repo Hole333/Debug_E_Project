@@ -11,6 +11,9 @@
 #define Electromagnet 14//继电器引脚
 #define Electromagnet_ON digitalWrite(Electromagnet, HIGH)
 #define Electromagnet_OFF digitalWrite(Electromagnet, LOW)
+#define LED 13
+#define LED_ON digitalWrite(LED, HIGH)
+#define LED_OFF digitalWrite(LED, LOW)
 #define X_Stepmotor 1
 #define Y_Stepmotor 2
 #define Z_Stepmotor 3
@@ -23,8 +26,10 @@ uint16_t Step_Time_Receive = 0;//计算发送命令时间,电机地址1是X轴，2是Y轴，3是Z轴
 uint16_t Step_X = 0;
 uint16_t Step_Y = 0;
 uint16_t Chessboard_Pos[10][2]={{0,0},{132,142},{100,142},{68,142},{132,110},{100,110},{68,110},{132,78},{100,78},{68,78},};//后面0表示X坐标，1表示Y坐标
-uint16_t chesssorce_Pos[11][2]={{0,0},{185,160},{185,135},{185,110},{185,85},{185,60},{15,160},{15,135},{15,110},{15,85},{15,60}};//后面0表示X坐标，1表示Y坐标
+//uint16_t chesssorce_Pos[12][2]={{0,0},{185,160},{185,135},{185,110},{185,85},{185,60},{15,160},{15,135},{15,110},{15,85},{15,60},{0,0}};//后面0表示X坐标，1表示Y坐标
+uint16_t chesssorce_Pos[12][2]={{0,0},{185,60},{185,85},{185,110},{185,135},{185,160},{15,60},{15,85},{15,110},{15,135},{15,160},{0,0}};//后面0表示X坐标，1表示Y坐标
 uint16_t BigChess_Pos[10]={0,0,0,0,0,0,0,0,0,0};//后面0表示无棋，1表示黑，2表示白
+uint16_t BigChess_Posold[10]={0,0,0,0,0,0,0,0,0,0};//后面0表示无棋，1表示黑，2表示白
 uint8_t Uart_Busy = 1;//是否在使用步进电机串口
 uint8_t All_OK_Flag = 0;//X、Y都到位
 uint8_t Receive_Count = 0;//接受次数
@@ -53,6 +58,7 @@ void setup()
     }
     TASK_Init();      // 任务初始化
     pinMode(Electromagnet, OUTPUT);//继电器初始化
+    pinMode(LED, OUTPUT);//继电器初始化
 }
 
 
@@ -719,7 +725,7 @@ void Mode4_Control(void)
                 {
                     Step_Time_Z = 0;
                     Mode4_State = 2;
-                    
+                    LED_ON;
                 }
             }
         break;
@@ -745,6 +751,7 @@ void Mode4_Control(void)
             {
                 // FinishReceiveFlag=true;
                 Mode4_State = 4;
+                LED_OFF;
             }
         break;
         case 4:
@@ -803,7 +810,7 @@ void Mode4_Control(void)
                 Mode4_State = 0;
                 if(Chess_selmode>0)
                 {
-                Button4 = 1;
+                    Button4 = 1;
                 }
             }
         break;
@@ -907,6 +914,7 @@ void Mode5_Control(void)
 
                 if(Step_Time_Z >= 120)
                 {
+                    LED_ON;
                     Step_Time_Z = 0;
                     Mode5_State = 2;
                 }
@@ -934,6 +942,7 @@ void Mode5_Control(void)
             {
                 // FinishReceiveFlag=true;
                 Mode5_State = 4;
+                LED_OFF;
             }
         break;
         case 4:
@@ -999,6 +1008,271 @@ void Mode5_Control(void)
     
     
 }
+void Mode6_Control(void)
+{
+    static uint8_t Mode5_State = 4;
+    static uint8_t Take_Count = 0;
+    switch (Mode5_State)
+    {
+        case 0://移动到任意黑棋 白棋中拿棋子
+            if(Chess_selmodebuff==Chess_selmode)
+            {
+                Step_X = chesssorce_Pos[Chesssource_Count+5][0];
+                Step_Y = chesssorce_Pos[Chesssource_Count+5][1];
+                if(Step_Time_Receive==0 && Button4==1)
+                {
+                    Step_Time_Receive = 1;
+                }
+
+                if(Step_Time_Receive >= 800)
+                {
+                    Step_Time_Receive = 0;
+                    All_OK_Flag = 1;
+                    Button4 = 0;
+                }
+
+                if(All_OK_Flag)
+                {
+                    Step_Time_Receive = 0;
+                    if(Step_Time_Z == 0)
+                    {
+                        Step_Time_Z = 1;
+                    }
+                    
+                    if((Step_Time_Z >= 1) && (Step_Time_Z < 45))
+                    {
+                        Take_Down;
+                    }
+
+                    if(Step_Time_Z >= 75)
+                    {
+                        Electromagnet_ON;
+                        Take_Up;
+                    }
+
+                    if(Step_Time_Z >= 110)
+                    {
+                        Step_Time_Z = 0;
+                        Mode5_State = 1;
+                       
+                        Step_X = Chessboard_Pos[Chess_Pos][0];
+                        Step_Y = Chessboard_Pos[Chess_Pos][1];
+                        All_OK_Flag = 0;
+                        Button4 = 1; 
+                        Take_Count+=1;
+                    }
+                }
+            }
+        break;
+        case 1://放到5号格子
+            Step_X = Chessboard_Pos[Chess_Pos][0];
+            Step_Y = Chessboard_Pos[Chess_Pos][1];
+
+            if(Step_Time_Receive==0 && Button4==1)
+            {
+                Step_Time_Receive = 1;
+            }
+
+            if(Step_Time_Receive >= 600)
+            {
+                Step_Time_Receive = 0;
+                All_OK_Flag = 1;
+                Button4 = 0;
+            }
+
+            if(All_OK_Flag)
+            {
+                if(Step_Time_Z == 0)
+                {
+                    Step_Time_Z = 1;
+                }
+
+                if((Step_Time_Z >= 1) && (Step_Time_Z < 45))
+                {
+                    Take_Down;
+                }
+
+                if(Step_Time_Z >= 35)
+                {
+                    Electromagnet_OFF;
+                }
+
+                if(Step_Time_Z >= 60)
+                {
+                    Take_Up;
+                }
+
+                if(Step_Time_Z >= 120)
+                {
+                    Step_Time_Z = 0;
+                    Mode5_State = 2;
+                    LED_ON;
+                }
+            }
+        break;
+        case 2://等待状态
+            Step_X = 0;
+            Step_Y = 0;
+            Button4 = 2;//回原点
+            All_OK_Flag = 0;
+            if(Step_Time_Receive==0)
+            {
+                Step_Time_Receive = 1;
+            }
+
+            if(Step_Time_Receive >= 600)
+            {
+                Mode5_State = 3;
+                //偷棋不算步数，正常一轮加一
+                if(Chesssource_Count!=6)
+                {Chess_selmode++;}
+                Chess_selmodebuff=100;
+                Step_Time_Receive=0;
+            }
+        break;
+        case 3://等待状态
+            if(Chess_selmodebuff==Chess_selmode)
+            {
+                // FinishReceiveFlag=true;
+                LED_OFF;
+                Mode5_State = 4;
+            }
+        break;
+        case 4:
+        if(Chess_selmodebuff==Chess_selmode)
+        {
+            Requst_Data;
+            // delay(300);
+            // Requst_Data;
+            if(FinishReceiveFlag)
+            {
+                FinishReceiveFlag = false;
+                for(uint8_t j = 0;j<=8;j++)
+                {
+                    // Serial.print(j);
+                    // Serial.print("(");
+                    // Serial.print(chess[j].x);
+                    // Serial.print(",");
+                    // Serial.print(chess[j].y);
+                    // Serial.println(")");
+                    Serial.print(chess[j].state);
+                    Serial.println("!");
+
+                    Chessboard_Pos[j+1][0] = chess[j].x;
+                    Chessboard_Pos[j+1][1] = chess[j].y;
+                    BigChess_Pos[j+1]=chess[j].state;
+                    // Serial.print(j+1);
+                    // Serial.print("(");
+                    // Serial.print(Chessboard_Pos[j+1][0]);
+                    // Serial.print(",");
+                    // Serial.print(Chessboard_Pos[j+1][1]);
+                    // Serial.println(")");
+                    Serial.print(BigChess_Pos[j+1]);
+                    Serial.println(")");
+                }
+                
+                
+                Receive_Count+=1;
+            }
+            if(Receive_Count>=10)
+            {
+                Receive_Count = 0;
+                Mode5_State = 5;
+                //Button4 = 1;
+            }
+         }
+        break;
+        case 5://偷棋检查
+        if(Chess_selmode==0)//第一步放置不检查
+        {
+            for(uint8_t j = 0;j<=9;j++)
+            {
+                BigChess_Posold[j]=BigChess_Pos[j];    
+            }
+            //第一步没有偷棋，就继续下棋
+            uint8_t board[3][3];
+            board[0][0]=BigChess_Pos[1];
+            board[0][1]=BigChess_Pos[2];
+            board[0][2]=BigChess_Pos[3];
+            board[1][0]=BigChess_Pos[4];
+            board[1][1]=BigChess_Pos[5];
+            board[1][2]=BigChess_Pos[6];
+            board[2][0]=BigChess_Pos[7];
+            board[2][1]=BigChess_Pos[8];
+            board[2][2]=BigChess_Pos[9];
+
+            getBestMove(board, 1, &bestRow, &bestCol);
+            Chesssource_Count=Chess_selmode+1;
+            Chess_Pos=bestRow*3+bestCol+1;
+            BigChess_Posold[Chess_Pos]=1;
+                Mode5_State = 0;
+            Button4 = 1;
+        }
+        else{
+            uint8_t falsenumber=0;
+            uint8_t falsenumberpos[4]={0,0,0,0};
+            //如果遍历前后两次棋盘，有2处不同，偷棋了
+            for(uint8_t j = 0;j<=9;j++)
+            {
+                if(BigChess_Posold[j]!=BigChess_Pos[j])   
+                {
+                    falsenumber++;
+                    falsenumberpos[falsenumber]=j;
+                }
+            }
+            if(falsenumber>=2)
+            {
+                //偷棋后先确定偷的是啥棋，然后把坐标放入第11颗棋位置（偷棋位）
+                Chesssource_Count=6;
+                //根据有没有棋确定两个错误点先后
+                if(BigChess_Posold[falsenumberpos[1]]==0)
+                {
+                    Chess_Pos=falsenumberpos[2];
+                    chesssorce_Pos[Chesssource_Count+5][0]=Chessboard_Pos[falsenumberpos[1]][0];
+                    chesssorce_Pos[Chesssource_Count+5][1]=Chessboard_Pos[falsenumberpos[1]][1];
+                }
+                else{
+                    Chess_Pos=falsenumberpos[1];
+                    chesssorce_Pos[Chesssource_Count+5][0]=Chessboard_Pos[falsenumberpos[2]][0];
+                    chesssorce_Pos[Chesssource_Count+5][1]=Chessboard_Pos[falsenumberpos[2]][1];
+                }
+                Mode5_State = 0;
+                Button4 = 1;
+
+
+            }else
+            {//没有偷棋，就继续下棋
+                for(uint8_t j = 0;j<=9;j++)
+                {
+                    BigChess_Posold[j]=BigChess_Pos[j];    
+                }
+                 uint8_t board[3][3];
+                board[0][0]=BigChess_Pos[1];
+                board[0][1]=BigChess_Pos[2];
+                board[0][2]=BigChess_Pos[3];
+                board[1][0]=BigChess_Pos[4];
+                board[1][1]=BigChess_Pos[5];
+                board[1][2]=BigChess_Pos[6];
+                board[2][0]=BigChess_Pos[7];
+                board[2][1]=BigChess_Pos[8];
+                board[2][2]=BigChess_Pos[9];
+
+                getBestMove(board, 1, &bestRow, &bestCol);
+                Chesssource_Count=Chess_selmode+1;
+                Chess_Pos=bestRow*3+bestCol+1;
+                BigChess_Posold[Chess_Pos]=1;
+                 Mode5_State = 0;
+                Button4 = 1;
+            }
+
+
+        }
+        
+        break;
+    }
+    
+    
+}
 /**@brief     控制任务
 -- @param     无
 **/
@@ -1020,6 +1294,9 @@ void Control_Task(void)
         break;
          case 5:
             Mode5_Control();
+        break;
+         case 6:
+            Mode6_Control();
         break;
     }
 }
