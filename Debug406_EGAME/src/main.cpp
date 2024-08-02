@@ -6,6 +6,7 @@
 #include <pid.h>
 #include <wifi_driver.h>
 #include<Chess_decision.h>
+#include <Chinese.h>
 
 //变量定义
 #define Electromagnet 14//继电器引脚
@@ -122,12 +123,12 @@ void StepMotor_Control(int16_t X_Step, int16_t Y_Step,uint16_t Speed)
             {
                 if(Y_Step > 0)
                 {
-                    Emm_V5_Pos_Control(Y_Stepmotor,CW,Speed,0,Y_Step,true,true);//绝对角度，多机同步
+                    Emm_V5_Pos_Control(Y_Stepmotor,CCW,Speed,0,Y_Step,true,true);//绝对角度，多机同步
                     Uart_Busy = 1;
                 }
                 else
                 {
-                    Emm_V5_Pos_Control(Y_Stepmotor,CCW,Speed,0,Y_Step,true,true);
+                    Emm_V5_Pos_Control(Y_Stepmotor,CW,Speed,0,Y_Step,true,true);
                     Uart_Busy = 1;
                 }
                 Step_Time = 1;
@@ -252,7 +253,7 @@ void Mode1_Control()
                     Step_Time_Receive = 1;
                 }
 
-                if(Step_Time_Receive >= 800)
+                if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
                 {
                     Step_Time_Receive = 0;
                     All_OK_Flag = 1;
@@ -299,7 +300,7 @@ void Mode1_Control()
                 Step_Time_Receive = 1;
             }
 
-            if(Step_Time_Receive >= 400)
+            if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
             {
                 Step_Time_Receive = 0;
                 All_OK_Flag = 1;
@@ -360,7 +361,7 @@ void Mode2_Control()
                     Step_Time_Receive = 1;
                 }
 
-                if(Step_Time_Receive >= 800)
+                if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
                 {
                     Step_Time_Receive = 0;
                     All_OK_Flag = 1;
@@ -410,7 +411,7 @@ void Mode2_Control()
                 Step_Time_Receive = 1;
             }
 
-            if(Step_Time_Receive >= 600)
+            if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
             {
                 Step_Time_Receive = 0;
                 All_OK_Flag = 1;
@@ -489,7 +490,7 @@ void Mode3_Control(void)
                     Step_Time_Receive = 1;
                 }
 
-                if(Step_Time_Receive >= 800)
+                if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
                 {
                     Step_Time_Receive = 0;
                     All_OK_Flag = 1;
@@ -540,7 +541,7 @@ void Mode3_Control(void)
                 Step_Time_Receive = 1;
             }
 
-            if(Step_Time_Receive >= 600)
+            if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
             {
                 Step_Time_Receive = 0;
                 All_OK_Flag = 1;
@@ -642,7 +643,7 @@ void Mode4_Control(void)
                     Step_Time_Receive = 1;
                 }
 
-                if(Step_Time_Receive >= 800)
+                if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
                 {
                     Step_Time_Receive = 0;
                     All_OK_Flag = 1;
@@ -692,7 +693,7 @@ void Mode4_Control(void)
                 Step_Time_Receive = 1;
             }
 
-            if(Step_Time_Receive >= 600)
+            if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
             {
                 Step_Time_Receive = 0;
                 All_OK_Flag = 1;
@@ -834,7 +835,7 @@ void Mode5_Control(void)
                     Step_Time_Receive = 1;
                 }
 
-                if(Step_Time_Receive >= 800)
+                if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
                 {
                     Step_Time_Receive = 0;
                     All_OK_Flag = 1;
@@ -883,7 +884,7 @@ void Mode5_Control(void)
                 Step_Time_Receive = 1;
             }
 
-            if(Step_Time_Receive >= 600)
+            if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
             {
                 Step_Time_Receive = 0;
                 All_OK_Flag = 1;
@@ -1024,7 +1025,7 @@ void Mode6_Control(void)
                     Step_Time_Receive = 1;
                 }
 
-                if(Step_Time_Receive >= 800)
+                if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
                 {
                     Step_Time_Receive = 0;
                     All_OK_Flag = 1;
@@ -1073,7 +1074,7 @@ void Mode6_Control(void)
                 Step_Time_Receive = 1;
             }
 
-            if(Step_Time_Receive >= 600)
+            if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
             {
                 Step_Time_Receive = 0;
                 All_OK_Flag = 1;
@@ -1273,6 +1274,476 @@ void Mode6_Control(void)
     
     
 }
+void Mode7_Control(void)
+{
+    static uint8_t Mode5_State = 4;
+    static uint8_t Take_Count = 0;
+    switch (Mode5_State)
+    {
+        case 0://移动到任意黑棋 白棋中拿棋子
+            if(Chess_selmodebuff==Chess_selmode)
+            {
+                Step_X = chesssorce_Pos[Chesssource_Count][0];
+                Step_Y = chesssorce_Pos[Chesssource_Count][1];
+                if(Step_Time_Receive==0 && Button4==1)
+                {
+                    Step_Time_Receive = 1;
+                }
+
+                if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
+                {
+                    Step_Time_Receive = 0;
+                    All_OK_Flag = 1;
+                    Button4 = 0;
+                }
+
+                if(All_OK_Flag)
+                {
+                    Step_Time_Receive = 0;
+                    if(Step_Time_Z == 0)
+                    {
+                        Step_Time_Z = 1;
+                    }
+                    
+                    if((Step_Time_Z >= 1) && (Step_Time_Z < 45))
+                    {
+                        Take_Down;
+                    }
+
+                    if(Step_Time_Z >= 75)
+                    {
+                        Electromagnet_ON;
+                        Take_Up;
+                    }
+
+                    if(Step_Time_Z >= 110)
+                    {
+                        Step_Time_Z = 0;
+                        Mode5_State = 1;
+                       
+                        Step_X = Chessboard_Pos[Chess_Pos][0];
+                        Step_Y = Chessboard_Pos[Chess_Pos][1];
+                        All_OK_Flag = 0;
+                        Button4 = 1; 
+                        Take_Count+=1;
+                    }
+                }
+            }
+        break;
+        case 1://放到5号格子
+            Step_X = Chessboard_Pos[Chess_Pos][0];
+            Step_Y = Chessboard_Pos[Chess_Pos][1];
+
+            if(Step_Time_Receive==0 && Button4==1)
+            {
+                Step_Time_Receive = 1;
+            }
+
+            if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
+            {
+                Step_Time_Receive = 0;
+                All_OK_Flag = 1;
+                Button4 = 0;
+            }
+
+            if(All_OK_Flag)
+            {
+                if(Step_Time_Z == 0)
+                {
+                    Step_Time_Z = 1;
+                }
+
+                if((Step_Time_Z >= 1) && (Step_Time_Z < 45))
+                {
+                    Take_Down;
+                }
+
+                if(Step_Time_Z >= 35)
+                {
+                    Electromagnet_OFF;
+                }
+
+                if(Step_Time_Z >= 60)
+                {
+                    Take_Up;
+                }
+
+                if(Step_Time_Z >= 120)
+                {
+                    Step_Time_Z = 0;
+                    Mode5_State = 2;
+                    LED_ON;
+                }
+            }
+        break;
+        case 2://等待状态
+            Step_X = 0;
+            Step_Y = 0;
+            Button4 = 2;//回原点
+            All_OK_Flag = 0;
+            if(Step_Time_Receive==0)
+            {
+                Step_Time_Receive = 1;
+            }
+
+            if(Step_Time_Receive >= 600)
+            {
+                Mode5_State = 3;
+                //偷棋不算步数，正常一轮加一
+                if(Chesssource_Count!=11)
+                {Chess_selmode++;}
+                Chess_selmodebuff=100;
+                Step_Time_Receive=0;
+            }
+        break;
+        case 3://等待状态
+            if(Chess_selmodebuff==Chess_selmode)
+            {
+                // FinishReceiveFlag=true;
+                LED_OFF;
+                Mode5_State = 4;
+            }
+        break;
+        case 4:
+        if(Chess_selmodebuff==Chess_selmode)
+        {
+            Requst_Data;
+            // delay(300);
+            // Requst_Data;
+            if(FinishReceiveFlag)
+            {
+                FinishReceiveFlag = false;
+                for(uint8_t j = 0;j<=8;j++)
+                {
+                    // Serial.print(j);
+                    // Serial.print("(");
+                    // Serial.print(chess[j].x);
+                    // Serial.print(",");
+                    // Serial.print(chess[j].y);
+                    // Serial.println(")");
+                    Serial.print(chess[j].state);
+                    Serial.println("!");
+
+                    Chessboard_Pos[j+1][0] = chess[j].x;
+                    Chessboard_Pos[j+1][1] = chess[j].y;
+                    BigChess_Pos[j+1]=chess[j].state;
+                    // Serial.print(j+1);
+                    // Serial.print("(");
+                    // Serial.print(Chessboard_Pos[j+1][0]);
+                    // Serial.print(",");
+                    // Serial.print(Chessboard_Pos[j+1][1]);
+                    // Serial.println(")");
+                    Serial.print(BigChess_Pos[j+1]);
+                    Serial.println(")");
+                }
+                
+                
+                Receive_Count+=1;
+            }
+            if(Receive_Count>=10)
+            {
+                Receive_Count = 0;
+                Mode5_State = 5;
+                //Button4 = 1;
+            }
+         }
+        break;
+        case 5://偷棋检查
+        if(Chess_selmode==0)//第一步放置不检查
+        {
+            for(uint8_t j = 0;j<=9;j++)
+            {
+                BigChess_Posold[j]=BigChess_Pos[j];    
+            }
+            //第一步没有偷棋，就继续下棋
+            uint8_t board[3][3];
+            board[0][0]=BigChess_Pos[1];
+            board[0][1]=BigChess_Pos[2];
+            board[0][2]=BigChess_Pos[3];
+            board[1][0]=BigChess_Pos[4];
+            board[1][1]=BigChess_Pos[5];
+            board[1][2]=BigChess_Pos[6];
+            board[2][0]=BigChess_Pos[7];
+            board[2][1]=BigChess_Pos[8];
+            board[2][2]=BigChess_Pos[9];
+
+            getBestMove(board, 2, &bestRow, &bestCol);
+            Chesssource_Count=Chess_selmode+1;
+            Chess_Pos=bestRow*3+bestCol+1;
+            BigChess_Posold[Chess_Pos]=2;
+                Mode5_State = 0;
+            Button4 = 1;
+        }
+        else{
+            uint8_t falsenumber=0;
+            uint8_t falsenumberpos[4]={0,0,0,0};
+            //如果遍历前后两次棋盘，有2处不同，偷棋了
+            for(uint8_t j = 0;j<=9;j++)
+            {
+                if(BigChess_Posold[j]!=BigChess_Pos[j])   
+                {
+                    falsenumber++;
+                    falsenumberpos[falsenumber]=j;
+                }
+            }
+            if(falsenumber>=2)
+            {
+                //偷棋后先确定偷的是啥棋，然后把坐标放入第11颗棋位置（偷棋位）
+                Chesssource_Count=11;
+                //根据有没有棋确定两个错误点先后
+                if(BigChess_Posold[falsenumberpos[1]]==0)
+                {
+                    Chess_Pos=falsenumberpos[2];
+                    chesssorce_Pos[11][0]=Chessboard_Pos[falsenumberpos[1]][0];
+                    chesssorce_Pos[11][1]=Chessboard_Pos[falsenumberpos[1]][1];
+                }
+                else{
+                    Chess_Pos=falsenumberpos[1];
+                    chesssorce_Pos[11][0]=Chessboard_Pos[falsenumberpos[2]][0];
+                    chesssorce_Pos[11][1]=Chessboard_Pos[falsenumberpos[2]][1];
+                }
+                Mode5_State = 0;
+                Button4 = 1;
+
+
+            }else
+            {//没有偷棋，就继续下棋
+                for(uint8_t j = 0;j<=9;j++)
+                {
+                    BigChess_Posold[j]=BigChess_Pos[j];    
+                }
+                 uint8_t board[3][3];
+                board[0][0]=BigChess_Pos[1];
+                board[0][1]=BigChess_Pos[2];
+                board[0][2]=BigChess_Pos[3];
+                board[1][0]=BigChess_Pos[4];
+                board[1][1]=BigChess_Pos[5];
+                board[1][2]=BigChess_Pos[6];
+                board[2][0]=BigChess_Pos[7];
+                board[2][1]=BigChess_Pos[8];
+                board[2][2]=BigChess_Pos[9];
+
+                getBestMove(board, 2, &bestRow, &bestCol);
+                Chesssource_Count=Chess_selmode+1;
+                Chess_Pos=bestRow*3+bestCol+1;
+                BigChess_Posold[Chess_Pos]=2;
+                 Mode5_State = 0;
+                Button4 = 1;
+            }
+
+
+        }
+        
+        break;
+    }
+    
+    
+}
+
+void Mode8_Control(void)
+{
+    static uint8_t Mode5_State = 4;
+    static uint8_t Take_Count = 0;
+    switch (Mode5_State)
+    {
+        case 0://移动到任意黑棋 白棋中拿棋子
+            if(Chess_selmodebuff==Chess_selmode)
+            {
+               
+                Step_X = Chessboard_Pos[Chess_Pos][0];
+                Step_Y = Chessboard_Pos[Chess_Pos][1];
+                
+                if(Step_Time_Receive==0 && Button4==1)
+                {
+                    Step_Time_Receive = 1;
+                }
+
+                if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
+                {
+                    Step_Time_Receive = 0;
+                    All_OK_Flag = 1;
+                    Button4 = 0;
+                }
+
+                if(All_OK_Flag)
+                {
+                    Step_Time_Receive = 0;
+                    if(Step_Time_Z == 0)
+                    {
+                        Step_Time_Z = 1;
+                    }
+                    
+                    if((Step_Time_Z >= 1) && (Step_Time_Z < 45))
+                    {
+                        Take_Down;
+                    }
+
+                    if(Step_Time_Z >= 75)
+                    {
+                        Electromagnet_ON;
+                        Take_Up;
+                    }
+
+                    if(Step_Time_Z >= 110)
+                    {
+                        Step_Time_Z = 0;
+                        Mode5_State = 1;
+                       
+                        Step_X = Chessboard_Pos[Chess_Pos][0];
+                        Step_Y = Chessboard_Pos[Chess_Pos][1];
+                        All_OK_Flag = 0;
+                        Button4 = 1; 
+                        Take_Count+=1;
+                    }
+                }
+            }
+        break;
+        case 1://放到5号格子
+             Step_X = chesssorce_Pos[Chesssource_Count][0];
+             Step_Y = chesssorce_Pos[Chesssource_Count][1];
+
+            if(Step_Time_Receive==0 && Button4==1)
+            {
+                Step_Time_Receive = 1;
+            }
+
+            if(Step_Time_Receive >= Step_X *1.1f + Step_Y *1.1f)
+            {
+                Step_Time_Receive = 0;
+                All_OK_Flag = 1;
+                Button4 = 0;
+            }
+
+            if(All_OK_Flag)
+            {
+                if(Step_Time_Z == 0)
+                {
+                    Step_Time_Z = 1;
+                }
+
+                if((Step_Time_Z >= 1) && (Step_Time_Z < 45))
+                {
+                    Take_Down;
+                }
+
+                if(Step_Time_Z >= 35)
+                {
+                    Electromagnet_OFF;
+                }
+
+                if(Step_Time_Z >= 60)
+                {
+                    Take_Up;
+                }
+
+                if(Step_Time_Z >= 120)
+                {
+                    LED_ON;
+                    Step_Time_Z = 0;
+                    Mode5_State = 2;
+                }
+            }
+        break;
+        case 2://等待状态
+            Step_X = 0;
+            Step_Y = 0;
+            Button4 = 2;//回原点
+            All_OK_Flag = 0;
+            if(Step_Time_Receive==0)
+            {
+                Step_Time_Receive = 1;
+            }
+
+            if(Step_Time_Receive >= 600)
+            {
+                Mode5_State = 4;
+                Chess_selmode++;
+                Step_Time_Receive=0;
+               
+               
+            }
+        break;
+        case 3://等待状态
+            if(Chess_selmodebuff==Chess_selmode)
+            {
+                // FinishReceiveFlag=true;
+                Mode5_State = 4;
+                LED_OFF;
+            }
+        break;
+        case 4:
+        if(Chess_selmodebuff==Chess_selmode)
+            {
+            Requst_Data;
+            // delay(300);
+            // Requst_Data;
+            if(FinishReceiveFlag)
+            {
+                FinishReceiveFlag = false;
+                for(uint8_t j = 0;j<=8;j++)
+                {
+                    // Serial.print(j);
+                    // Serial.print("(");
+                    // Serial.print(chess[j].x);
+                    // Serial.print(",");
+                    // Serial.print(chess[j].y);
+                    // Serial.println(")");
+                    Serial.print(chess[j].state);
+                    Serial.println("!");
+
+                    Chessboard_Pos[j+1][0] = chess[j].x;
+                    Chessboard_Pos[j+1][1] = chess[j].y;
+                    BigChess_Pos[j+1]=chess[j].state;
+                    // Serial.print(j+1);
+                    // Serial.print("(");
+                    // Serial.print(Chessboard_Pos[j+1][0]);
+                    // Serial.print(",");
+                    // Serial.print(Chessboard_Pos[j+1][1]);
+                    // Serial.println(")");
+                    Serial.print(BigChess_Pos[j+1]);
+                    Serial.println(")");
+                }
+                
+                    
+                
+                
+                Receive_Count+=1;
+            }
+            if(Receive_Count>=10)
+            {
+                
+                if(BigChess_Pos[5]==1)
+                {
+                    bestRow++;
+                    Chesssource_Count=bestRow+5;
+                    Chess_Pos=5;
+                    Receive_Count = 0;
+                    Mode5_State = 0;
+                    Button4 = 1;
+                }
+                else if(BigChess_Pos[5]==2)
+                {
+                    bestCol++;
+                    Chesssource_Count=bestCol;
+                    Chess_Pos=5;
+                    Receive_Count = 0;
+                    Mode5_State = 0;
+                    Button4 = 1;
+                }
+                else
+                {
+                    Mode5_State = 4;
+                    Chess_selmodebuff=100;
+                    
+                }
+                
+            }
+         }
+        break;
+    }
+    
+    
+}
 /**@brief     控制任务
 -- @param     无
 **/
@@ -1298,7 +1769,18 @@ void Control_Task(void)
          case 6:
             Mode6_Control();
         break;
+         case 7:
+            Mode7_Control();
+        break;
+         case 8:
+            Mode8_Control();
+        break;
     }
 }
+
+
+
+
+
 
 

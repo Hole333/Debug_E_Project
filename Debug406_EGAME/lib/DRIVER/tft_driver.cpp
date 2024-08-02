@@ -1,6 +1,8 @@
 #include <tft_driver.h>
 #include <string.h>
 #include <Preferences.h>
+#include <Chinese.h>
+
 //创建屏幕对象
 TFT_eSPI tft = TFT_eSPI();
 cursor_t cursor;
@@ -45,7 +47,7 @@ void TFT_init(void)
     digitalWrite(TFT_BACKLIGHT, HIGH);
         //显示屏初始化 120*160
     tft.init();
-    tft.setRotation(1);
+    tft.setRotation(3);
     tft.fillScreen(TFT_BLACK);
     tft.setTextSize(2);
     // cursor.ico = (char*)"<=";
@@ -140,16 +142,20 @@ void Menu_Task(void)
 
     if(Menu_Mode == 0)
     {
-        tft.drawString("Mode0",0,0);
-        tft.drawString("sel mode:",0,16);
-        tft.drawNumber(Menu_Modebuff,108,16);
+        draw_Chinese(0, 0, "模", TFT_WHITE);
+        draw_Chinese(16, 0, "式", TFT_WHITE);
+        tft.drawNumber(0,32,0);
+        draw_Chinese(0, 16, "选", TFT_WHITE);
+        draw_Chinese(16, 16, "择", TFT_WHITE);
+        tft.drawString(":",32,16);
+        tft.drawNumber(Menu_Modebuff,48,16);
         if(Button1==1)
         {
             Button1 = 0;
             Button2 = 0;
             Button3 = 0;
             Menu_Modebuff++;
-            if(Menu_Modebuff>6)
+            if(Menu_Modebuff>8)
             {Menu_Modebuff=1;}
         }
         else if(Button2==1)
@@ -159,7 +165,7 @@ void Menu_Task(void)
             Button3 = 0;
             Menu_Modebuff--;
             if(Menu_Modebuff<1)
-            {Menu_Modebuff=6;}
+            {Menu_Modebuff=8;}
         }
         else if(Button3==1)
         {
@@ -168,7 +174,7 @@ void Menu_Task(void)
             Button3 = 0;
             Menu_Mode=Menu_Modebuff;
             tft.fillScreen(TFT_BLACK);
-            if(Menu_Mode==5||Menu_Mode==6)
+            if(Menu_Mode>=5)
             {Chess_selmodebuff=100;}
             
         }
@@ -177,12 +183,15 @@ void Menu_Task(void)
     }
     if(Menu_Mode == 1)
     {
-        tft.drawString("Mode1",0,0);
-        tft.drawString("sel bchess:",0,16);
-        tft.drawNumber(Chesssource_Count,132,16);
-        {tft.drawString("wait but4!",0,32);}
-        
-         if(Button1==1)
+        draw_Chinese(0, 0, "模", TFT_WHITE);
+        draw_Chinese(16, 0, "式", TFT_WHITE);
+        tft.drawNumber(1,32,0);
+        draw_Chinese(0, 16, "棋", TFT_WHITE);
+        draw_Chinese(16, 16, "子", TFT_WHITE);
+        tft.drawString(":",32,16);
+        tft.drawNumber(Chesssource_Count,48,16);
+
+        if(Button1==1)
         {
             Button1 = 0;
             Button2 = 0;
@@ -217,16 +226,26 @@ void Menu_Task(void)
 
     if(Menu_Mode == 2)
     {
-        tft.drawString("Mode2",0,0);
-        tft.drawString("chess:",0,16);
-        tft.drawNumber(Chesssource_Count,72,16);
-        tft.drawString("pos:",0,32);
+        draw_Chinese(0, 0, "模", TFT_WHITE);
+        draw_Chinese(16, 0, "式", TFT_WHITE);
+        tft.drawNumber(2,32,0);
+        draw_Chinese(0, 16, "棋", TFT_WHITE);
+        draw_Chinese(16, 16, "子", TFT_WHITE);
+        tft.drawString(":",32,16);
+        tft.drawNumber(Chesssource_Count,48,16);
+        draw_Chinese(0, 32, "位", TFT_WHITE);                     
+        draw_Chinese(16, 32, "置", TFT_WHITE); 
+        tft.drawString(":",32,32);  
         tft.drawNumber(Chess_Pos,48,32);
+
         if(Chess_selmode==0)
-        {tft.drawString("-",120,16);}
+        {
+            tft.drawString("<",120,16);
+        }
         else 
-        {tft.drawString("-",120,32);}
-        {tft.drawString("wait but4",0,48);}
+        {
+            tft.drawString("<",120,32);
+        }
         
          if(Button1==1)
         {
@@ -290,16 +309,35 @@ void Menu_Task(void)
     }
     if(Menu_Mode == 3)
     {
-        tft.drawString("Mode3",0,0);
-        tft.drawString("chess:",0,16);
-        tft.drawNumber(Chesssource_Count,72,16);
-        tft.drawString("pos:",0,32);
+        draw_Chinese(0, 0, "模", TFT_WHITE);
+        draw_Chinese(16, 0, "式", TFT_WHITE);
+        tft.drawNumber(3,32,0);
+        draw_Chinese(0, 16, "棋", TFT_WHITE);
+        draw_Chinese(16, 16, "子", TFT_WHITE);
+        tft.drawString(":",32,16);
+        tft.drawNumber(Chesssource_Count,48,16);
+        draw_Chinese(0, 32, "位", TFT_WHITE);                     
+        draw_Chinese(16, 32, "置", TFT_WHITE); 
+        tft.drawString(":",32,32);  
         tft.drawNumber(Chess_Pos,48,32);
         if(Chess_selmode==0)
-        {tft.drawString("-",120,16);}
+        {
+            tft.drawString("<",120,16);
+        }
         else 
-        {tft.drawString("-",120,32);}
-        {tft.drawString("wait but4",0,48);}
+        {
+            tft.drawString("<",120,32);
+        }
+        // tft.drawString("Mode3",0,0);
+        // tft.drawString("chess:",0,16);
+        // tft.drawNumber(Chesssource_Count,72,16);
+        // tft.drawString("pos:",0,32);
+        // tft.drawNumber(Chess_Pos,48,32);
+        // if(Chess_selmode==0)
+        // {tft.drawString("-",120,16);}
+        // else 
+        // {tft.drawString("-",120,32);}
+        // {tft.drawString("wait but4",0,48);}
         
          if(Button1==1)
         {
@@ -363,24 +401,43 @@ void Menu_Task(void)
     }
      if(Menu_Mode == 4)
     {
-        tft.drawString("M4",0,0);
-        tft.drawString("pos:",0,16);
+        draw_Chinese(0, 0, "模", TFT_WHITE);
+        draw_Chinese(16, 0, "式", TFT_WHITE);
+        tft.drawNumber(4,32,0);
+        draw_Chinese(0, 16, "位", TFT_WHITE);
+        draw_Chinese(16, 16, "置", TFT_WHITE);
+        tft.drawString(":",32,16);
         tft.drawNumber(Chess_Pos,48,16);
-        tft.drawString("step:",48,0);
-        tft.drawNumber(Chess_selmode,96,0);
-        tft.drawString("best:",0,32);
-        tft.drawNumber(bestRow,80,32);
-        tft.drawNumber(bestCol,112,32);
-        tft.drawNumber(BigChess_Pos[1],0,48);
-        tft.drawNumber(BigChess_Pos[2],24,48);
-        tft.drawNumber(BigChess_Pos[3],48,48);
-        tft.drawNumber(BigChess_Pos[4],0,64);
-        tft.drawNumber(BigChess_Pos[5],24,64);
-        tft.drawNumber(BigChess_Pos[6],48,64);
-        tft.drawNumber(BigChess_Pos[7],0,80);
-        tft.drawNumber(BigChess_Pos[8],24,80);
-        tft.drawNumber(BigChess_Pos[9],48,80);
-        
+        draw_Chinese(0, 32, "步", TFT_WHITE);
+        draw_Chinese(16, 32, "骤", TFT_WHITE);
+        tft.drawString(":",32,32);
+        tft.drawNumber(Chess_selmode,48,32);
+
+        draw_Chinese(64, 32, "最", TFT_WHITE);
+        draw_Chinese(80, 32, "佳", TFT_WHITE);
+        tft.drawString(":",96,32);
+        tft.drawNumber(bestRow, 112,32);
+        tft.drawNumber(bestCol,128,32);
+
+        tft.drawLine(0,60,66,60,TFT_WHITE);//一横线
+        tft.drawLine(0,81,66,81,TFT_WHITE);//二横线
+        tft.drawLine(0,102,66,102,TFT_WHITE);//三横线
+        tft.drawLine(0,123,66,123,TFT_WHITE);//四横线
+        tft.drawLine(0,60,0,123,TFT_WHITE);//左一横线
+        tft.drawLine(21,60,21,123,TFT_WHITE);//左二横线
+        tft.drawLine(44,60,44,123,TFT_WHITE);//左三横线
+        tft.drawLine(66,60,66,123,TFT_WHITE);//左四横线
+        tft.drawNumber(BigChess_Pos[1],5,64);
+        tft.drawNumber(BigChess_Pos[2],29,64);
+        tft.drawNumber(BigChess_Pos[3],53,64);
+        tft.drawNumber(BigChess_Pos[4],5,85);
+        tft.drawNumber(BigChess_Pos[5],29,85);
+        tft.drawNumber(BigChess_Pos[6],53,85);
+        tft.drawNumber(BigChess_Pos[7],5,106);
+        tft.drawNumber(BigChess_Pos[8],29,106);
+        tft.drawNumber(BigChess_Pos[9],53,106);
+        draw_Chinese(80, 80, "棋", TFT_WHITE);
+        draw_Chinese(96, 80, "盘", TFT_WHITE);
         
          if(Button1==1&&Chess_selmode==0)
         {
@@ -432,23 +489,43 @@ void Menu_Task(void)
     }
 if(Menu_Mode == 5)
     {
-        tft.drawString("M5",0,0);
-        tft.drawString("step:",48,0);
-        tft.drawNumber(Chess_selmode,96,0);
-        tft.drawString("best:",0,32);
-        tft.drawNumber(bestRow,80,32);
-        tft.drawNumber(bestCol,112,32);
-        tft.drawNumber(BigChess_Pos[1],0,48);
-        tft.drawNumber(BigChess_Pos[2],24,48);
-        tft.drawNumber(BigChess_Pos[3],48,48);
-        tft.drawNumber(BigChess_Pos[4],0,64);
-        tft.drawNumber(BigChess_Pos[5],24,64);
-        tft.drawNumber(BigChess_Pos[6],48,64);
-        tft.drawNumber(BigChess_Pos[7],0,80);
-        tft.drawNumber(BigChess_Pos[8],24,80);
-        tft.drawNumber(BigChess_Pos[9],48,80);
-        
-        
+        draw_Chinese(0, 0, "模", TFT_WHITE);
+        draw_Chinese(16, 0, "式", TFT_WHITE);
+        tft.drawNumber(5,32,0);
+        // draw_Chinese(0, 16, "棋", TFT_WHITE);
+        // draw_Chinese(16, 16, "子", TFT_WHITE);
+        // tft.drawString(":",32,16);
+        // tft.drawNumber(Chesssource_Count,48,16);
+        draw_Chinese(0, 32, "步", TFT_WHITE);
+        draw_Chinese(16, 32, "骤", TFT_WHITE);
+        tft.drawString(":",32,32);
+        tft.drawNumber(Chess_selmode,48,32);
+
+        draw_Chinese(64, 32, "最", TFT_WHITE);
+        draw_Chinese(80, 32, "佳", TFT_WHITE);
+        tft.drawString(":",96,32);
+        tft.drawNumber(bestRow, 112,32);
+        tft.drawNumber(bestCol,128,32);
+
+        tft.drawLine(0,60,66,60,TFT_WHITE);//一横线
+        tft.drawLine(0,81,66,81,TFT_WHITE);//二横线
+        tft.drawLine(0,102,66,102,TFT_WHITE);//三横线
+        tft.drawLine(0,123,66,123,TFT_WHITE);//四横线
+        tft.drawLine(0,60,0,123,TFT_WHITE);//左一横线
+        tft.drawLine(21,60,21,123,TFT_WHITE);//左二横线
+        tft.drawLine(44,60,44,123,TFT_WHITE);//左三横线
+        tft.drawLine(66,60,66,123,TFT_WHITE);//左四横线
+        tft.drawNumber(BigChess_Pos[1],5,64);
+        tft.drawNumber(BigChess_Pos[2],29,64);
+        tft.drawNumber(BigChess_Pos[3],53,64);
+        tft.drawNumber(BigChess_Pos[4],5,85);
+        tft.drawNumber(BigChess_Pos[5],29,85);
+        tft.drawNumber(BigChess_Pos[6],53,85);
+        tft.drawNumber(BigChess_Pos[7],5,106);
+        tft.drawNumber(BigChess_Pos[8],29,106);
+        tft.drawNumber(BigChess_Pos[9],53,106);
+        draw_Chinese(80, 80, "棋", TFT_WHITE);
+        draw_Chinese(96, 80, "盘", TFT_WHITE);
         
         if(Button3==1)
         {
@@ -478,23 +555,104 @@ if(Menu_Mode == 5)
     }
     if(Menu_Mode == 6)
     {
-        tft.drawString("M6",0,0);
-        tft.drawString("step:",48,0);
-        tft.drawNumber(Chess_selmode,96,0);
-        tft.drawString("best:",0,32);
-        tft.drawNumber(bestRow,80,32);
-        tft.drawNumber(bestCol,112,32);
-        tft.drawNumber(BigChess_Pos[1],0,48);
-        tft.drawNumber(BigChess_Pos[2],24,48);
-        tft.drawNumber(BigChess_Pos[3],48,48);
-        tft.drawNumber(BigChess_Pos[4],0,64);
-        tft.drawNumber(BigChess_Pos[5],24,64);
-        tft.drawNumber(BigChess_Pos[6],48,64);
-        tft.drawNumber(BigChess_Pos[7],0,80);
-        tft.drawNumber(BigChess_Pos[8],24,80);
-        tft.drawNumber(BigChess_Pos[9],48,80);
-        
-        
+        draw_Chinese(0, 0, "模", TFT_WHITE);
+        draw_Chinese(16, 0, "式", TFT_WHITE);
+        tft.drawNumber(6,32,0);
+
+        draw_Chinese(0, 32, "步", TFT_WHITE);
+        draw_Chinese(16, 32, "骤", TFT_WHITE);
+        tft.drawString(":",32,32);
+        tft.drawNumber(Chess_selmode,48,32);
+
+        draw_Chinese(64, 32, "最", TFT_WHITE);
+        draw_Chinese(80, 32, "佳", TFT_WHITE);
+        tft.drawString(":",96,32);
+        tft.drawNumber(bestRow, 112,32);
+        tft.drawNumber(bestCol,128,32);
+
+        draw_Chinese(80, 80, "棋", TFT_WHITE);
+        draw_Chinese(96, 80, "盘", TFT_WHITE);
+        tft.drawLine(0,60,66,60,TFT_WHITE);//一横线
+        tft.drawLine(0,81,66,81,TFT_WHITE);//二横线
+        tft.drawLine(0,102,66,102,TFT_WHITE);//三横线
+        tft.drawLine(0,123,66,123,TFT_WHITE);//四横线
+        tft.drawLine(0,60,0,123,TFT_WHITE);//左一横线
+        tft.drawLine(21,60,21,123,TFT_WHITE);//左二横线
+        tft.drawLine(44,60,44,123,TFT_WHITE);//左三横线
+        tft.drawLine(66,60,66,123,TFT_WHITE);//左四横线
+        tft.drawNumber(BigChess_Pos[1],5,64);
+        tft.drawNumber(BigChess_Pos[2],29,64);
+        tft.drawNumber(BigChess_Pos[3],53,64);
+        tft.drawNumber(BigChess_Pos[4],5,85);
+        tft.drawNumber(BigChess_Pos[5],29,85);
+        tft.drawNumber(BigChess_Pos[6],53,85);
+        tft.drawNumber(BigChess_Pos[7],5,106);
+        tft.drawNumber(BigChess_Pos[8],29,106);
+        tft.drawNumber(BigChess_Pos[9],53,106);
+
+        // tft.drawString("M6",0,0);
+        // tft.drawString("step:",48,0);
+        // tft.drawNumber(Chess_selmode,96,0);
+        // tft.drawString("best:",0,32);
+        // tft.drawNumber(bestRow,80,32);
+        // tft.drawNumber(bestCol,112,32);
+        if(Button3==1)
+        {
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            tft.fillScreen(TFT_BLACK);
+            Chess_selmodebuff=Chess_selmode;
+            
+            tft.fillScreen(TFT_BLACK);
+        }
+        else if(Button3==2)
+        {
+            
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            Menu_Mode=0;
+            Chess_selmode=0;
+            Chess_Pos=1;
+            Chesssource_Count=1;
+            tft.fillScreen(TFT_BLACK);
+        }
+    }
+    if(Menu_Mode == 7)
+    {
+        draw_Chinese(0, 0, "模", TFT_WHITE);
+        draw_Chinese(16, 0, "式", TFT_WHITE);
+        tft.drawNumber(7,32,0);
+        draw_Chinese(0, 32, "步", TFT_WHITE);
+        draw_Chinese(16, 32, "骤", TFT_WHITE);
+        tft.drawString(":",32,32);
+        tft.drawNumber(Chess_selmode,48,32);
+        draw_Chinese(64, 32, "最", TFT_WHITE);
+        draw_Chinese(80, 32, "佳", TFT_WHITE);
+        tft.drawString(":",96,32);
+        tft.drawNumber(bestRow, 112,32);
+        tft.drawNumber(bestCol,128,32);
+        draw_Chinese(80, 80, "棋", TFT_WHITE);
+        draw_Chinese(96, 80, "盘", TFT_WHITE);
+        tft.drawLine(0,60,66,60,TFT_WHITE);//一横线
+        tft.drawLine(0,81,66,81,TFT_WHITE);//二横线
+        tft.drawLine(0,102,66,102,TFT_WHITE);//三横线
+        tft.drawLine(0,123,66,123,TFT_WHITE);//四横线
+        tft.drawLine(0,60,0,123,TFT_WHITE);//左一横线
+        tft.drawLine(21,60,21,123,TFT_WHITE);//左二横线
+        tft.drawLine(44,60,44,123,TFT_WHITE);//左三横线
+        tft.drawLine(66,60,66,123,TFT_WHITE);//左四横线
+        tft.drawNumber(BigChess_Pos[1],5,64);
+        tft.drawNumber(BigChess_Pos[2],29,64);
+        tft.drawNumber(BigChess_Pos[3],53,64);
+        tft.drawNumber(BigChess_Pos[4],5,85);
+        tft.drawNumber(BigChess_Pos[5],29,85);
+        tft.drawNumber(BigChess_Pos[6],53,85);
+        tft.drawNumber(BigChess_Pos[7],5,106);
+        tft.drawNumber(BigChess_Pos[8],29,106);
+        tft.drawNumber(BigChess_Pos[9],53,106);
+
         
         if(Button3==1)
         {
@@ -522,5 +680,64 @@ if(Menu_Mode == 5)
         
         
     }
+    if(Menu_Mode == 8)
+    {
+        draw_Chinese(0, 0, "模", TFT_WHITE);
+        draw_Chinese(16, 0, "式", TFT_WHITE);
+        tft.drawNumber(8,32,0);
 
+        draw_Chinese(0, 32, "步", TFT_WHITE);
+        draw_Chinese(16, 32, "骤", TFT_WHITE);
+        tft.drawString(":",32,32);
+        tft.drawNumber(Chess_selmode,48,32);
+
+        draw_Chinese(64, 32, "最", TFT_WHITE);
+        draw_Chinese(80, 32, "佳", TFT_WHITE);
+        tft.drawString(":",96,32);
+        tft.drawNumber(bestRow, 112,32);
+        tft.drawNumber(bestCol,128,32);
+
+        draw_Chinese(80, 80, "棋", TFT_WHITE);
+        draw_Chinese(96, 80, "盘", TFT_WHITE);
+        tft.drawLine(0,60,66,60,TFT_WHITE);//一横线
+        tft.drawLine(0,81,66,81,TFT_WHITE);//二横线
+        tft.drawLine(0,102,66,102,TFT_WHITE);//三横线
+        tft.drawLine(0,123,66,123,TFT_WHITE);//四横线
+        tft.drawLine(0,60,0,123,TFT_WHITE);//左一横线
+        tft.drawLine(21,60,21,123,TFT_WHITE);//左二横线
+        tft.drawLine(44,60,44,123,TFT_WHITE);//左三横线
+        tft.drawLine(66,60,66,123,TFT_WHITE);//左四横线
+        tft.drawNumber(BigChess_Pos[1],5,64);
+        tft.drawNumber(BigChess_Pos[2],29,64);
+        tft.drawNumber(BigChess_Pos[3],53,64);
+        tft.drawNumber(BigChess_Pos[4],5,85);
+        tft.drawNumber(BigChess_Pos[5],29,85);
+        tft.drawNumber(BigChess_Pos[6],53,85);
+        tft.drawNumber(BigChess_Pos[7],5,106);
+        tft.drawNumber(BigChess_Pos[8],29,106);
+        tft.drawNumber(BigChess_Pos[9],53,106);
+        
+        if(Button3==1)
+        {
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            tft.fillScreen(TFT_BLACK);
+            Chess_selmodebuff=Chess_selmode;
+            
+            tft.fillScreen(TFT_BLACK);
+        }
+        else if(Button3==2)
+        {
+            
+            Button1 = 0;
+            Button2 = 0;
+            Button3 = 0;
+            Menu_Mode=0;
+            Chess_selmode=0;
+            Chess_Pos=1;
+            Chesssource_Count=1;
+            tft.fillScreen(TFT_BLACK);
+        }
+    }
 }

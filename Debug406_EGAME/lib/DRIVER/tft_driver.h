@@ -18,7 +18,7 @@ typedef struct cursor{
     char* ico;    // 光标的图标
     uint16_t currLine;   // 光标当前所在行
 }cursor_t;
-
+extern TFT_eSPI tft;
 extern cursor_t cursor;
 extern const char* menuName[];
 extern uint16_t Chessboard_RD_X;//棋盘右下X坐标
