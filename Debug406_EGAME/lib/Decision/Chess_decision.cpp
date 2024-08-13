@@ -32,11 +32,11 @@ uint8_t evaluate(uint8_t board[SIZE][SIZE], uint8_t player) {
 	uint8_t playerCountDiag1 = 0;
 	uint8_t playerCountDiag2 = 0;
 
-	//鑾疯儨
+	// 赢得比赛
 	if (checkWin(board, player)) {
 		score += 100;
 	}
-	//骞崇嚎涓や釜鐩歌繛
+	// 行和列两个连续
 	for (uint8_t i = 0; i < SIZE - 1; i++) {
 		playerCountRow = 0;
 		playerCountCol = 0;
@@ -47,16 +47,16 @@ uint8_t evaluate(uint8_t board[SIZE][SIZE], uint8_t player) {
 		if (playerCountRow >= 1) score += 10;
 		if (playerCountCol >= 1) score += 10;
 	}
-	//鏂滃悜涓や釜鐩歌繛
+	// 对角线两个连续
 	for (uint8_t i = 0; i < SIZE - 1; i++) {
 		if (board[i][i] == player && board[i+1][i+1] == player)   playerCountDiag1++;
 		if (board[i][SIZE - i - 1] == player && board[i+1][SIZE - i-2] == player)   playerCountDiag2++;
 	}
 	if (playerCountDiag1 >= 1) score += 10;
 	if (playerCountDiag2 >= 1) score += 10;
-	//涓績鐐?
+	// 中心点
 	if (board[1][1] == player) score += 20;
-	//鍥涜鐐?
+	// 四角点
 	for (uint8_t k = 0; k < 4; k++) {
 		uint8_t x = corners[k][0];
 		uint8_t y = corners[k][1];
@@ -74,10 +74,10 @@ void getBestMove(uint8_t board[SIZE][SIZE], uint8_t player, uint8_t *bestRow, ui
 	for (uint8_t i = 0; i < SIZE; i++) {
 		for (uint8_t j = 0; j < SIZE; j++) {
 			if (board[i][j] == EMPTY) {
-				//鏀逛綅缃负鎴戞斁涓嬬殑寰楀垎
+				// 将位置设置为自己的标志并评估得分
 				board[i][j] = player;
 				score_p = evaluate(board, player);
-				//鏀逛綅缃负鏁屾斁涓嬬殑寰楀垎
+				// 将位置设置为对手的标志并评估得分
 				board[i][j] = opponent;
 				score_o = evaluate(board, opponent)/2;
 
